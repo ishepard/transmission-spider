@@ -125,7 +125,7 @@ def contact_transmission(user, xTransmissionSessionId):
         contact_transmission(user, xTransmissionSessionId)
         return
     if r.status_code != 200:
-        print("ERROR: status_code is " + r.status_code + ": url " + user['url'])
+        print("ERROR: status_code is {}: url {}".format(r.status_code, user['url']))
         return
 
     torrents = r.json()['arguments']['torrents']
