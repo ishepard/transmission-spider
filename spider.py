@@ -46,7 +46,7 @@ def update_timeline():
             # print(user)
             futures.append(executor.submit(contact_transmission, user=user, xTransmissionSessionId=""))
     for future in concurrent.futures.as_completed(futures):
-        pprint(future.result())
+        future.result()
         # contact_transmission(user=user, xTransmissionSessionId="")
 
 
@@ -198,5 +198,6 @@ def contact_transmission(user, xTransmissionSessionId):
 
 if __name__ == '__main__':
     scheduler = BlockingScheduler()
+    update_timeline()
     scheduler.add_job(update_timeline, 'interval', seconds=60)
     scheduler.start()
