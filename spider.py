@@ -16,7 +16,7 @@ print(os.getenv('MONGODB_URL'))
 mongo_client = MongoClient(os.getenv('MONGODB_URL'))
 print("Created mongo_client")
 
-database = mongo_client['transmission-torrent']
+database = mongo_client['transmission-remote']
 print("Created database")
 
 usercredentials = database.usercredentials
