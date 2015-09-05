@@ -16,7 +16,7 @@ print(os.getenv('MONGODB_URL'))
 mongo_client = MongoClient(os.getenv('MONGODB_URL'))
 print("Created mongo_client")
 
-database = mongo_client['test']
+database = mongo_client['transmission-torrent']
 print("Created database")
 
 usercredentials = database.usercredentials
@@ -198,5 +198,5 @@ def contact_transmission(user, xTransmissionSessionId):
 
 if __name__ == '__main__':
     scheduler = BlockingScheduler()
-    scheduler.add_job(update_timeline, 'interval', seconds=10)
+    scheduler.add_job(update_timeline, 'interval', seconds=60)
     scheduler.start()
