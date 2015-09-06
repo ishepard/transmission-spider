@@ -158,7 +158,7 @@ def contact_transmission(user, xTransmissionSessionId):
         elif action == "delete":
             try:
                 timeline.delete_user_pin(user['token'], user['pins'][torrent['hashString']][0])
-            except Exception:
+            except Exception as e:
                 if e.response.status_code == 410:
                     print("User " + user['token'] + " invalid, removing it from database")
                     usercredentials.delete_one({'token': user['token']})
