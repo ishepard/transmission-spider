@@ -156,15 +156,22 @@ def contact_transmission(user, xTransmissionSessionId):
                 print("Send pin failed to user " + user['token'])
 
         elif action == "delete":
-            timeline.delete_user_pin(user['token'], user['pins'][torrent['hashString']][0])
-            print("Pin " + torrent['name'] + " deleted successfully!")
-            del user['pins'][torrent['hashString']]
-            usercredentials.find_one_and_update({'token': user['token']}, {'$set': {'pins': user['pins']}})
+            try:
+                timeline.delete_user_pin(user['token'], user['pins'][torrent['hashString']][0])
+            except Exception:
+                if e.response.status_code == 410:
+                    print("User " + user['token'] + " invalid, removing it from database")
+                    usercredentials.delete_one({'token': user['token']})
+                    break
+            else:
+                print("Pin " + torrent['name'] + " deleted successfully!")
+                del user['pins'][torrent['hashString']]
+                usercredentials.find_one_and_update({'token': user['token']}, {'$set': {'pins': user['pins']}})
 
         elif action == "showable":
             is_showable = user['pins'][torrent['hashString']][1]
             if not is_showable:
-                print("Torent " + torrent['name'] + " already sent to " + user['token'])
+                print("Torrent " + torrent['name'] + " already sent to " + user['token'])
                 continue
 
             print("Pin is showable, sending the pin")
