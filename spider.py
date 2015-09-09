@@ -12,7 +12,6 @@ from pymongo import MongoClient
 from pypebbleapi import Timeline
 from requests.auth import HTTPBasicAuth
 
-print(os.getenv('MONGODB_URL'))
 mongo_client = MongoClient(os.getenv('MONGODB_URL'))
 print("Created mongo_client")
 
@@ -145,12 +144,12 @@ def contact_transmission(user, xTransmissionSessionId):
                     user_token=user['token'],
                     pin=pin,
                 )
-                print("Sent pin of " + torrent['name'] + " to " + user['token'] + " successfully!")
+                print("User: " + user['token'] + ", sent pin " + torrent['name'] + " successfully!")
                 usercredentials.find_one_and_update({'token': user['token']}, {'$set': {'pins': user['pins']}})
 
             except Exception as e:
                 if e.response.status_code == 410:
-                    print("User " + user['token'] + " invalid, removing it from database")
+                    print("User: " + user['token'] + " invalid, removing it from database")
                     usercredentials.delete_one({'token': user['token']})
                     break
                 print("Send pin failed to user " + user['token'])
@@ -163,18 +162,18 @@ def contact_transmission(user, xTransmissionSessionId):
                     print("User " + user['token'] + " invalid, removing it from database")
                     usercredentials.delete_one({'token': user['token']})
                     break
+                print("Delete pin failed of user " + user['token'])
             else:
-                print("Pin " + torrent['name'] + " deleted successfully!")
+                print("User: " + user['token'] + ", pin " + torrent['name'] + " deleted successfully!")
                 del user['pins'][torrent['hashString']]
                 usercredentials.find_one_and_update({'token': user['token']}, {'$set': {'pins': user['pins']}})
 
         elif action == "showable":
             is_showable = user['pins'][torrent['hashString']][1]
             if not is_showable:
-                print("Torrent " + torrent['name'] + " already sent to " + user['token'])
+                print("User: " + user['token'] + ", pin " + torrent['name'] + " already sent")
                 continue
 
-            print("Pin is showable, sending the pin")
             pin = create_pin_from_torrent(torrent, user['pins'][torrent['hashString']][0])
             try:
                 timeline.send_user_pin(
@@ -188,7 +187,7 @@ def contact_transmission(user, xTransmissionSessionId):
                     break
                 print("Send pin failed to user " + user['token'])
             else:
-                print("Sent pin of " + torrent['name'] + " to " + user['token'] + " successfully!")
+                print("User: " + user['token'] + ", sent pin " + torrent['name'] + " successfully!")
                 user['pins'][torrent['hashString']][1] = 0
                 usercredentials.find_one_and_update({'token': user['token']}, {'$set': {'pins': user['pins']}})
 
