@@ -34,8 +34,10 @@ def torrent_action(torrent):
 
     is_showable = datetime.utcfromtimestamp(torrent['doneDate']) >= datetime.today() - threshold_days
 
-    if (is_showable):
+    if is_showable:
         return "showable"
+    else:
+        return "not_showable"
     return "delete"
 
 def update_timeline():
@@ -193,6 +195,9 @@ def contact_transmission(user, xTransmissionSessionId):
                 print("User: {}, sent pin {} successfully!".format(user['token'], torrent['name']))
                 user['pins'][torrent['hashString']][1] = 0
                 usercredentials.find_one_and_update({'token': user['token']}, {'$set': {'pins': user['pins']}})
+
+        elif action == "not_showable":
+            print "User: {}, pin {} is not showable".format(user['token'], torrent['name'])
 
     if 'pins' in user:
         pins_sent = set(user['pins'].keys())
