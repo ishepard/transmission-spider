@@ -162,6 +162,9 @@ def contact_transmission(user, xTransmissionSessionId):
                     print("User " + user['token'] + " invalid, removing it from database")
                     usercredentials.delete_one({'token': user['token']})
                     break
+                if e.response.status_code == 429:
+                    print("User " + user['token'] + ", rate limit exceeded!")
+                    break
                 print("Delete pin failed of user " + user['token'] + ", status_code= " + str(e.response.status_code))
             else:
                 print("User: " + user['token'] + ", pin " + torrent['name'] + " deleted successfully!")
