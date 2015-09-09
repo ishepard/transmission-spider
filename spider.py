@@ -162,7 +162,7 @@ def contact_transmission(user, xTransmissionSessionId):
                     print("User " + user['token'] + " invalid, removing it from database")
                     usercredentials.delete_one({'token': user['token']})
                     break
-                print("Delete pin failed of user " + user['token'])
+                print("Delete pin failed of user " + user['token'] + ", status_code= " + e.response.status_code)
             else:
                 print("User: " + user['token'] + ", pin " + torrent['name'] + " deleted successfully!")
                 del user['pins'][torrent['hashString']]
