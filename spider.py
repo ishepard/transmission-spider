@@ -198,6 +198,8 @@ def contact_transmission(user, xTransmissionSessionId):
 
         elif action == "not_showable":
             print("User: {}, pin {} is not showable".format(user['token'], torrent['name']))
+            del user['pins'][torrent['hashString']]
+            usercredentials.find_one_and_update({'token': user['token']}, {'$set': {'pins': user['pins']}})
 
     if 'pins' in user:
         pins_sent = set(user['pins'].keys())
