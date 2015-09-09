@@ -117,7 +117,7 @@ def contact_transmission(user, xTransmissionSessionId):
         r = requests.post(user['url'], auth=HTTPBasicAuth(user['username'], user['password']),
                       headers=headers, data=json.dumps(form), timeout=5)
     except Exception:
-        print(user['url'] + " not reachable")
+        print("{} not reachable".format(user['url']))
         return
     if (r.status_code == 409):
         xTransmissionSessionId = r.headers["x-transmission-session-id"]
@@ -144,37 +144,37 @@ def contact_transmission(user, xTransmissionSessionId):
                     user_token=user['token'],
                     pin=pin,
                 )
-                print("User: " + user['token'] + ", sent pin " + torrent['name'] + " successfully!")
+                print("User: {}, sent pin {} successfully!".format(user['token'], torrent['name']))
                 usercredentials.find_one_and_update({'token': user['token']}, {'$set': {'pins': user['pins']}})
 
             except Exception as e:
                 if e.response.status_code == 410:
-                    print("User: " + user['token'] + " invalid, removing it from database")
+                    print("User: {} invalid, removing it from database".format(user['token']))
                     usercredentials.delete_one({'token': user['token']})
                     break
-                print("Send pin failed to user " + user['token'])
+                print("Send pin failed to user {}".format(user['token']))
 
         elif action == "delete":
             try:
                 timeline.delete_user_pin(user['token'], user['pins'][torrent['hashString']][0])
             except Exception as e:
                 if e.response.status_code == 410:
-                    print("User " + user['token'] + " invalid, removing it from database")
+                    print("User: {} invalid, removing it from database".format(user['token']))
                     usercredentials.delete_one({'token': user['token']})
                     break
                 if e.response.status_code == 429:
-                    print("User " + user['token'] + ", rate limit exceeded!")
+                    print("User {}, rate limit exceeded!".format(user['token']))
                     break
-                print("Delete pin failed of user " + user['token'] + ", status_code= " + str(e.response.status_code))
+                print("Delete pin failed of user {}, status_code= {}".format(user['token'], e.response.status_code))
             else:
-                print("User: " + user['token'] + ", pin " + torrent['name'] + " deleted successfully!")
+                print("User: {}, pin {} deleted successfully!".format(user['token'], torrent['name']))
                 del user['pins'][torrent['hashString']]
                 usercredentials.find_one_and_update({'token': user['token']}, {'$set': {'pins': user['pins']}})
 
         elif action == "showable":
             is_showable = user['pins'][torrent['hashString']][1]
             if not is_showable:
-                print("User: " + user['token'] + ", pin " + torrent['name'] + " already sent")
+                print("User: {}, pin {} already sent".format(user['token'], torrent['name']))
                 continue
 
             pin = create_pin_from_torrent(torrent, user['pins'][torrent['hashString']][0])
@@ -185,12 +185,12 @@ def contact_transmission(user, xTransmissionSessionId):
                 )
             except Exception as e:
                 if e.response.status_code == 410:
-                    print("User " + user['token'] + " invalid, removing it from database")
+                    print("User: {} invalid, removing it from database".format(user['token']))
                     usercredentials.delete_one({'token': user['token']})
                     break
-                print("Send pin failed to user " + user['token'])
+                print("Send pin failed to user {}".format(user['token']))
             else:
-                print("User: " + user['token'] + ", sent pin " + torrent['name'] + " successfully!")
+                print("User: {}, sent pin {} successfully!".format(user['token'], torrent['name']))
                 user['pins'][torrent['hashString']][1] = 0
                 usercredentials.find_one_and_update({'token': user['token']}, {'$set': {'pins': user['pins']}})
 
