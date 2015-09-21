@@ -198,8 +198,6 @@ def contact_transmission(user, xTransmissionSessionId):
 
         elif action == "not_showable":
             print("User: {}, pin {} is not showable".format(user['token'], torrent['name']))
-            del user['pins'][torrent['hashString']]
-            usercredentials.find_one_and_update({'token': user['token']}, {'$set': {'pins': user['pins']}})
 
     if 'pins' in user:
         pins_sent = set(user['pins'].keys())
@@ -215,5 +213,5 @@ def contact_transmission(user, xTransmissionSessionId):
 if __name__ == '__main__':
     scheduler = BlockingScheduler()
     update_timeline()
-    scheduler.add_job(update_timeline, 'interval', seconds=60)
+    scheduler.add_job(update_timeline, 'interval', seconds=120)
     scheduler.start()
