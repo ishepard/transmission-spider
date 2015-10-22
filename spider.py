@@ -131,7 +131,6 @@ def contact_transmission(user, xTransmissionSessionId):
 
     torrents = r.json()['arguments']['torrents']
     user.setdefault('pins', dict())
-    print(user['pins'])
     for torrent in torrents:
 
         user['pins'].setdefault(torrent['hashString'], [str(uuid.uuid4()), 1])
