@@ -214,5 +214,5 @@ def contact_transmission(user, xTransmissionSessionId):
 if __name__ == '__main__':
     scheduler = BlockingScheduler()
     update_timeline()
-    scheduler.add_job(update_timeline, 'interval', seconds=10)
+    scheduler.add_job(update_timeline, 'interval', seconds=120)
     scheduler.start()
