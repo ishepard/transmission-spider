@@ -25,7 +25,7 @@ timeline = Timeline()
 
 
 def torrent_action(torrent):
-    threshold_days = timedelta(days=3);
+    threshold_days = timedelta(days=3)
     if (torrent['eta'] < 0 and torrent['doneDate'] == 0):
         return "delete"
 
@@ -130,11 +130,12 @@ def contact_transmission(user, xTransmissionSessionId):
         return
 
     torrents = r.json()['arguments']['torrents']
+    user.setdefault('pins', dict())
+    print(user['pins'])
     for torrent in torrents:
-        user.setdefault('pins', dict())
 
         user['pins'].setdefault(torrent['hashString'], [str(uuid.uuid4()), 1])
-        usercredentials.find_one_and_update({'token': user['token']}, {'$set': {'pins': user['pins']}})
+        # usercredentials.find_one_and_update({'token': user['token']}, {'$set': {'pins': user['pins']}})
 
         action = torrent_action(torrent)
 
@@ -213,5 +214,5 @@ def contact_transmission(user, xTransmissionSessionId):
 if __name__ == '__main__':
     scheduler = BlockingScheduler()
     update_timeline()
-    scheduler.add_job(update_timeline, 'interval', seconds=120)
+    scheduler.add_job(update_timeline, 'interval', seconds=10)
     scheduler.start()
